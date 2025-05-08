@@ -60,3 +60,11 @@ def get_tuple(key):
             return f"OK ({key}, {value}) removed"
         else:
             return f"ERR {key} does not exist"
+
+def put_tuple(key, value):
+    with lock:
+        if key not in tuple_space:
+            tuple_space[key] = value
+            return f"OK ({key}, {value}) added"
+        else:
+            return f"ERR {key} already exists"
