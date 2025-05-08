@@ -22,7 +22,19 @@ def encode_request(op, key, value):
         msg = f"{cmd} {key} {value}"
     else:
         msg = f"{cmd} {key}"
-    msg_len = len(msg) + 4  # 3位长度 + 空格
+    msg_len = len(msg) + 4
     if msg_len < 7 or msg_len > 999:
         raise ValueError("Invalid message length")
     return f"{msg_len:03d} {msg}"
+
+def main():
+    if len(sys.argv) != 4:
+        print("Usage: python client.py <hostname> <port> <request_file>")
+        return
+    host, port, file_path = sys.argv[1], int(sys.argv[2]), sys.argv[3]
+    try:
+        with open(file_path, 'r') as f:
+            lines = f.readlines()
+    except IOError:
+        print(f"Error: Cannot open file {file_path}")
+        return
