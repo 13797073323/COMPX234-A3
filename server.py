@@ -44,3 +44,11 @@ def process_request(request):
         return put_tuple(key, value)
     else:
         return "ERR Unknown command"
+
+def read_tuple(key):
+    with lock:
+        if key in tuple_space:
+            value = tuple_space[key]
+            return f"OK ({key}, {value}) read"
+        else:
+            return f"ERR {key} does not exist"
