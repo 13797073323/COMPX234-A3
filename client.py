@@ -38,3 +38,22 @@ def main():
     except IOError:
         print(f"Error: Cannot open file {file_path}")
         return
+
+    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+        try:
+            s.connect((host, port))
+        except ConnectionRefusedError:
+            print("Error: Server not reachable")
+            return
+        
+        for line in lines:
+            valid, result = validate_request(line)
+            if not valid:
+                print(f"{line.strip()}: {result}")
+                continue
+            op, key, value = result
+            try:
+                request = encode_request(op, key, value)
+            except ValueError as e:
+                print(f"{line.strip()}: Error - {e}")
+                continue
