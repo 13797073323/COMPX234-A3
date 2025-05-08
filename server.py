@@ -52,3 +52,11 @@ def read_tuple(key):
             return f"OK ({key}, {value}) read"
         else:
             return f"ERR {key} does not exist"
+
+def get_tuple(key):
+    with lock:
+        if key in tuple_space:
+            value = tuple_space.pop(key)
+            return f"OK ({key}, {value}) removed"
+        else:
+            return f"ERR {key} does not exist"
