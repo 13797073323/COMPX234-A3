@@ -94,7 +94,7 @@ def handle_client(conn, addr, tuple_space):
             else:
                 status, detail = "ERR", "invalid command"
 
-            
+
             response = f"{status} {detail}"
             response_len = f"{len(response) + 4:03d}"
             full_response = f"{response_len} {response}"
@@ -103,3 +103,25 @@ def handle_client(conn, addr, tuple_space):
         print(f"Client {addr} error: {e}")
     finally:
         conn.close()
+
+def print_stats(tuple_space):
+    while True:
+        time.sleep(10)
+        stats = tuple_space.get_stats()
+        print(f"[STAT] Tuples={stats[0]} | AvgSize={stats[1]:.2f} | Clients={stats[4]} | Ops={stats[5]} (R:{stats[6]} G:{stats[7]} P:{stats[8]}) | Errors={stats[9]}")
+
+if __name__ == "__main__":
+    HOST, PORT = "localhost", 51234
+    tuple_space = TupleSpace()
+
+    stat_thread = threading.Thread(target=print_stats, args=(tuple_space,), daemon=True)
+    stat_thread.start()
+
+    with ThreadedTCPServer(socket.AF_INET, socket.SOCK_STREAM) as server:
+        server.bind((HOST, PORT))
+        server.listen()
+        print(f"Server listening on {HOST}:{PORT}")
+        while True:
+            conn, addr = server.accept()
+            client_thread = threading.Thread(target=handle_client, args=(conn, addr, tuple_space))
+            client_thread.start()
