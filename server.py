@@ -24,3 +24,23 @@ def handle_client(client_socket):
 
     client_socket.close()
 
+
+def process_request(request):
+    parts = request.split()
+    if len(parts) < 2:
+        return "ERR Invalid request"
+
+    command = parts[1]
+
+    if command == 'R':  # READ
+        key = parts[2]
+        return read_tuple(key)
+    elif command == 'G':  # GET
+        key = parts[2]
+        return get_tuple(key)
+    elif command == 'P':  # PUT
+        key = parts[2]
+        value = ' '.join(parts[3:])
+        return put_tuple(key, value)
+    else:
+        return "ERR Unknown command"
