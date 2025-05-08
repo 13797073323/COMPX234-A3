@@ -68,3 +68,18 @@ def put_tuple(key, value):
             return f"OK ({key}, {value}) added"
         else:
             return f"ERR {key} already exists"
+
+
+def start_server(port):
+    server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    server_socket.bind(('0.0.0.0', port))
+    server_socket.listen(5)
+
+    print(f"Server listening on port {port}")
+
+    while True:
+        client_socket, addr = server_socket.accept()
+        print(f"Accepted connection from {addr}")
+
+        client_thread = threading.Thread(target=handle_client, args=(client_socket,))
+        client_thread.start()
