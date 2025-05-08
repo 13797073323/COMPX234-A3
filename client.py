@@ -45,7 +45,7 @@ def main():
         except ConnectionRefusedError:
             print("Error: Server not reachable")
             return
-        
+
         for line in lines:
             valid, result = validate_request(line)
             if not valid:
@@ -57,3 +57,17 @@ def main():
             except ValueError as e:
                 print(f"{line.strip()}: Error - {e}")
                 continue
+
+                # 发送请求并接收响应
+                s.sendall(request.encode())
+                response = s.recv(1024).decode().strip()
+                if not response:
+                    print(f"{line.strip()}: No response from server")
+                    continue
+                resp_len = int(response[:3])
+                status = response[4:6]
+                detail = response[7:]
+                print(f"{line.strip()}: {status} {detail}")
+
+        if __name__ == "__main__":
+            main()
