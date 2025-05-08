@@ -36,3 +36,14 @@ class TupleSpace:
                 self.get_count += 1
                 self.total_ops += 1
                 return "OK", f"({key}, {value}) removed"
+
+    def read(self, key):
+        with self.lock:
+            if key not in self.store:
+                self.error_count += 1
+                return "ERR", f"{key} does not exist"
+            else:
+                value = self.store[key]
+                self.read_count += 1
+                self.total_ops += 1
+                return "OK", f"({key}, {value}) read"
