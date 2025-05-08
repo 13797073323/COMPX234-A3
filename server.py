@@ -83,3 +83,6 @@ def start_server(port):
 
         client_thread = threading.Thread(target=handle_client, args=(client_socket,))
         client_thread.start()
+
+if __name__ == "__main__":
+    start_server(51234)
