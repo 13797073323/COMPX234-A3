@@ -47,3 +47,22 @@ class TupleSpace:
                 self.read_count += 1
                 self.total_ops += 1
                 return "OK", f"({key}, {value}) read"
+
+    def get_stats(self):
+        with self.lock:
+            num_tuples = len(self.store)
+            avg_key = sum(len(k) for k in self.store.keys()) / num_tuples if num_tuples > 0 else 0
+            avg_value = sum(len(v) for v in self.store.values()) / num_tuples if num_tuples > 0 else 0
+            avg_tuple = avg_key + avg_value if num_tuples > 0 else 0
+            return (
+                num_tuples,
+                avg_tuple,
+                avg_key,
+                avg_value,
+                self.total_clients,
+                self.total_ops,
+                self.read_count,
+                self.get_count,
+                self.put_count,
+                self.error_count
+            )
