@@ -1,34 +1,17 @@
-import socket
 import sys
+import socket
 
-
-def send_request(hostname, port, request):
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-        sock.connect((hostname, port))
-
-        # Send the request to the server
-        sock.sendall(request.encode())
-
-        # Receive the response from the server
-        response = sock.recv(1024).decode()
-
-    return response
-
-def main():
-    if len(sys.argv) != 4:
-        print("Usage: python client.py <hostname> <port> <request_file>")
-        sys.exit(1)
-
-    hostname = sys.argv[1]
-    port = int(sys.argv[2])
-    request_file = sys.argv[3]
-
-    with open(request_file, 'r') as file:
-        for line in file.readlines():
-            line = line.strip()
-            if line:  # Ignore empty lines
-                response = send_request(hostname, port, line)
-                print(f"{line}: {response}")
-
-if __name__ == "__main__":
-    main()
+def validate_request(line):
+    parts = line.strip().split()
+    if len(parts) < 2:
+        return False, "Invalid command format"
+    op = parts[0]
+    if op not in ["PUT", "GET", "READ"]:
+        return False, "Unknown operation"
+    key = parts[1]
+    value = ' '.join(parts[2:]) if len(parts) > 2 else None
+   
+    collated = f"{key} {value}" if value else key
+    if len(collated) > 970:
+        return False, "Collated size exceeds 970 characters"
+    return True, (op, key, value)
