@@ -29,3 +29,6 @@ def main():
             if line:  # Ignore empty lines
                 response = send_request(hostname, port, line)
                 print(f"{line}: {response}")
+
+if __name__ == "__main__":
+    main()
